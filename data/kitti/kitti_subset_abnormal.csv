@@ -1,0 +1,3 @@
+﻿sequence,frame_id,image_path,lidar_path,image_ok,lidar_ok,image_height,image_width,lidar_points
+2011_09_26_drive_0001_sync,107,E:\monodepth_project\data\kitti\2011_09_26\2011_09_26_drive_0001_sync\image_02\data\0000000107.png,E:\monodepth_project\data\kitti\2011_09_26\2011_09_26_drive_0001_sync\velodyne_points\data\0000000107.bin,True,True,375,1242,98322
+2011_09_26_drive_0005_sync,153,E:\monodepth_project\data\kitti\2011_09_26\2011_09_26_drive_0005_sync\image_02\data\0000000153.png,E:\monodepth_project\data\kitti\2011_09_26\2011_09_26_drive_0005_sync\velodyne_points\data\0000000153.bin,True,True,375,1242,98532

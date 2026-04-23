@@ -1,0 +1,15 @@
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+.env
+.venv/
+venv/
+logs/
+weights/
+*.pth
+*.pt
+.DS_Store
+Thumbs.db
+
+# Raw KITTI data
+data/kitti/2011_09_26/
