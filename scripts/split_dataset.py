@@ -18,13 +18,13 @@ print(f"加载 {len(df)} 条清洗后样本")
 seq_sizes = df.groupby("sequence").size()
 seq_names = sorted(seq_sizes.keys(), key=lambda s: seq_sizes[s], reverse=True)
 
-# 轮流分配: train, val, test, train, val, test, ...
-pools = ["train", "val", "test"]
+# 轮流分配，按 4:1:1 比例（train 约占 67%）
+pools = ["train", "train", "val", "train", "train", "test"]
 assignment = {}
 counts = {"train": 0, "val": 0, "test": 0}
 
 for i, seq in enumerate(seq_names):
-    pool = pools[i % 3]
+    pool = pools[i % 6]
     assignment[seq] = pool
     counts[pool] += seq_sizes[seq]
 
