@@ -11,5 +11,6 @@ weights/
 .DS_Store
 Thumbs.db
 
-# Raw KITTI data
-data/kitti/2011_09_26/
+# Large external data (not in repo)
+# Depth maps and raw KITTI data live at E:\monodepth_project\data\
+.claude/

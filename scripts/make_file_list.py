@@ -1,25 +1,21 @@
+"""工具: 从清洗后的 CSV 生成 train/val/test 文件列表。"""
+
 import os
+import pandas as pd
 
-root = r"E:\monodepth_project\data\kitti\2011_09_26"
-sequences = [
-    "2011_09_26_drive_0001_sync",
-    "2011_09_26_drive_0002_sync",
-    "2011_09_26_drive_0005_sync"
-]
+csv_path = r"E:\monodepth-obstacle-warning\data\kitti\kitti_subset_final_cleaned.csv"
+save_dir = r"E:\monodepth-obstacle-warning\data\kitti"
 
-save_path = r"E:\monodepth_project\data\kitti\train_files.txt"
+df = pd.read_csv(csv_path)
 
-with open(save_path, "w", encoding="utf-8") as f:
-    for seq in sequences:
-        img_dir = os.path.join(root, seq, "image_02", "data")
-        lidar_dir = os.path.join(root, seq, "velodyne_points", "data")
+if "split" not in df.columns:
+    print("错误: CSV 中没有 split 列，请先运行 split_dataset.py")
+    exit()
 
-        img_files = sorted([x for x in os.listdir(img_dir) if x.endswith(".png")])
-        lidar_files = sorted([x for x in os.listdir(lidar_dir) if x.endswith(".bin")])
-
-        for img_name, lidar_name in zip(img_files, lidar_files):
-            img_path = os.path.join(img_dir, img_name)
-            lidar_path = os.path.join(lidar_dir, lidar_name)
-            f.write(f"{img_path} {lidar_path}\n")
-
-print("训练列表已生成：", save_path)
+for split_name in ["train", "val", "test"]:
+    subset = df[df["split"] == split_name]
+    filepath = os.path.join(save_dir, f"{split_name}_files.txt")
+    with open(filepath, "w", encoding="utf-8") as f:
+        for _, row in subset.iterrows():
+            f.write(f"{row['image_path']} {row['lidar_path']}\n")
+    print(f"{split_name}: {len(subset)} 条 -> {filepath}")
