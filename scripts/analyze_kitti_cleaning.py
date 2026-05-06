@@ -43,14 +43,26 @@ for (h, w), c in size_counts.items():
 print(f"\n=== 点云点数分布 ===")
 print(df["lidar_points"].describe())
 
+# === 去重检查 ===
+dup_frame = df.duplicated(subset=["sequence", "frame_id"], keep=False).sum()
+dup_path = df.duplicated(subset=["image_path"], keep=False).sum()
+print(f"\n=== 去重检查 ===")
+print(f"重复 (sequence+frame_id): {dup_frame} 条")
+print(f"重复 (image_path):        {dup_path} 条")
+
 # === 标记异常样本 ===
+dup_mask = df.duplicated(subset=["image_path"], keep="first")
 abnormal_mask = (
     (~df["image_ok"]) |
     (~df["lidar_ok"]) |
     (df["image_height"] <= 0) |
     (df["image_width"] <= 0) |
-    (df["lidar_points"] < LIDAR_THRESHOLD)
+    (df["lidar_points"] < LIDAR_THRESHOLD) |
+    dup_mask
 )
+n_dup_removed = dup_mask.sum()
+if n_dup_removed > 0:
+    print(f"\n  去重移除: {n_dup_removed} 条")
 abnormal_df = df[abnormal_mask].copy()
 
 print(f"\n=== 异常样本: {len(abnormal_df)} 条 ===")
