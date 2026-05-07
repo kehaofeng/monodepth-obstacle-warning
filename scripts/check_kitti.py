@@ -5,7 +5,7 @@ import cv2
 import random
 import numpy as np
 
-kitti_root = r"E:\monodepth_project\data\kitti"
+kitti_root = r"E:\monodepth-obstacle-warning\data\kitti"
 
 # 自动发现序列
 for date_dir in sorted(os.listdir(kitti_root)):

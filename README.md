@@ -13,15 +13,38 @@
 │   ├── train_files.txt            # Step 3 输出：训练集文件列表
 │   ├── val_files.txt              # Step 3 输出：验证集文件列表
 │   └── test_files.txt             # Step 3 输出：测试集文件列表
-├── scripts/                       # 数据清洗脚本
+├── scripts/                       # 脚本
 │   ├── clean_kitti_subset.py      # Step 1: 提取元数据
 │   ├── analyze_kitti_cleaning.py  # Step 2: 质量分析 + 异常检测
 │   ├── split_dataset.py           # Step 3: 划分 train/val/test
 │   ├── export_depth_maps.py       # Step 4: LiDAR 投影生成深度图
 │   ├── plot_kitti_analysis.py     # Step 5: 生成分析图表
+│   ├── convert_to_monodepth2.py   # Step 6: 转换为 Monodepth2 数据格式
+│   ├── start_training.sh          # Step 7: 启动 Monodepth2 训练
 │   ├── check_kitti.py             # 工具：快速检查数据完整性
 │   ├── make_file_list.py          # 工具：从 CSV 生成文件列表
 │   └── show_kitti_samples.py      # 工具：可视化样本 + 深度图
+├── monodepth2/                     # Monodepth2 模型源码
+│   ├── train.py                   # 训练入口
+│   ├── trainer.py                 # 训练循环 + Loss 计算
+│   ├── layers.py                  # SSIM / 视差-深度转换 / 平滑Loss
+│   ├── options.py                 # 命令行参数
+│   ├── kitti_utils.py             # KITTI 工具（点云加载、深度图生成）
+│   ├── utils.py                   # 通用工具
+│   ├── test_simple.py             # 单图推理
+│   ├── evaluate_depth.py          # 深度评估
+│   ├── networks/                  # 网络结构
+│   │   ├── resnet_encoder.py      # ResNet 编码器
+│   │   ├── depth_decoder.py       # 深度解码器
+│   │   ├── pose_decoder.py        # 位姿解码器
+│   │   └── pose_cnn.py            # PoseCNN（可选）
+│   ├── datasets/                  # 数据加载
+│   │   ├── mono_dataset.py        # 单目数据集基类
+│   │   └── kitti_dataset.py       # KITTI 数据集
+│   └── splits/kitti_subset/       # 训练/验证/测试文件列表
+│       ├── train_files.txt
+│       ├── val_files.txt
+│       └── test_files.txt
 ├── results/plots/                 # 分析图表
 │   ├── sequence_counts_bar.png    # 各序列样本数柱状图
 │   ├── lidar_points_hist.png      # 点云点数分布直方图
@@ -56,13 +79,19 @@ python scripts/export_depth_maps.py
 
 # Step 5: 生成数据集统计图表
 python scripts/plot_kitti_analysis.py
+
+# Step 6: 转换为 Monodepth2 训练格式
+python scripts/convert_to_monodepth2.py
+
+# Step 7: 训练 Monodepth2 模型
+bash scripts/start_training.sh
 ```
 
 ## 数据来源
 
 - **KITTI Raw Dataset**：http://www.cvlibs.net/datasets/kitti/raw_data.php
 - 当前使用 `2011_09_26` + `2011_09_28` 两个日期共 26 个同步序列
-- 原始数据路径：`E:\monodepth_project\data\kitti\`
+- 原始数据路径：`E:\monodepth-obstacle-warning\data\kitti\`
 
 ## 清洗结果
 
@@ -73,10 +102,11 @@ python scripts/plot_kitti_analysis.py
 | 点云读取失败 | 0 |
 | 尺寸分布 | 375×1242 (1473), 370×1224 (1926) |
 | 点云点数过低 (<100,000) | 5 |
-| **清洗后样本** | **3394** |
-| 训练集 | 2405 (70.9%) |
-| 验证集 | 613 (18.1%) |
-| 测试集 | 376 (11.1%) |
+| 点云文件缺失 (drive_0009) | 4 |
+| **清洗后样本** | **3390** |
+| 训练集 | 2365 (69.8%) |
+| 验证集 | 605 (17.8%) |
+| 测试集 | 368 (10.9%) |
 
 ## 数据分析结论
 
@@ -92,13 +122,54 @@ python scripts/plot_kitti_analysis.py
 ### 4. 数据质量
 无图像/点云读取失败、无重复帧、无尺寸异常。数据质量良好，可直接用于模型训练。
 
+## Monodepth2 模型训练
+
+```bash
+# 1. 转换数据为 Monodepth2 格式
+python scripts/convert_to_monodepth2.py
+
+# 2. 启动训练（默认 20 epochs, batch_size=4）
+bash scripts/start_training.sh
+
+# 自定义参数
+bash scripts/start_training.sh 30 8
+```
+
+训练日志和模型权重保存在 `logs/kitti_subset_model/`，使用 TensorBoard 监控：
+
+```bash
+tensorboard --logdir logs
+```
+
+### 模型推理
+
+```bash
+cd monodepth2
+python test_simple.py \
+  --image_path <图片路径> \
+  --model_path logs/kitti_subset_model/models/weights_19
+```
+
+输出：视差图 `.jpeg` 和 `.npy` 文件。
+
+### 训练结果（20 epochs）
+
+| 指标 | 数值 |
+|------|------|
+| 训练样本 | 2365 |
+| 验证样本 | 605 |
+| 测试样本 | 368 |
+| 输入分辨率 | 192×640 |
+| 编码器 | ResNet18 (pretrained) |
+| 最终模型 | weights_19 |
+
 ## 当前进度
 
 - [x] 数据清洗与预处理
 - [x] 深度图生成（LiDAR 投影）
 - [x] 数据集划分
 - [x] 统计分析与可视化
-- [ ] Monodepth2 基线训练
+- [x] Monodepth2 基线训练
 - [ ] Lite-Mono 模型升级
 - [ ] 避障提示可视化
 

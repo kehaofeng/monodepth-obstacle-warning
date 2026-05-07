@@ -6,7 +6,7 @@ import numpy as np
 import pandas as pd
 
 # === 路径设置 ===
-kitti_root = r"E:\monodepth_project\data\kitti"
+kitti_root = r"E:\monodepth-obstacle-warning\data\kitti"
 save_dir = r"E:\monodepth-obstacle-warning\data\kitti"
 os.makedirs(save_dir, exist_ok=True)
 

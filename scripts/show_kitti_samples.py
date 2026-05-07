@@ -9,7 +9,7 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
 # === 路径 ===
-kitti_root = r"E:\monodepth_project\data\kitti"
+kitti_root = r"E:\monodepth-obstacle-warning\data\kitti"
 csv_path = r"E:\monodepth-obstacle-warning\data\kitti\kitti_subset_final_cleaned.csv"
 plot_path = r"E:\monodepth-obstacle-warning\results\plots\sample_depth_grid.png"
 

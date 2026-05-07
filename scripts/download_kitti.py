@@ -8,7 +8,7 @@ import zipfile
 import requests
 
 DATE = "2011_09_28"
-KITTI_ROOT = r"E:\monodepth_project\data\kitti"
+KITTI_ROOT = r"E:\monodepth-obstacle-warning\data\kitti"
 BASE_URL = "https://s3.eu-central-1.amazonaws.com/avg-kitti/raw_data"
 
 # Correct drive list for 2011_09_28 (from official downloader)

@@ -13,9 +13,9 @@ import numpy as np
 import pandas as pd
 
 # === 路径设置 ===
-kitti_root = r"E:\monodepth_project\data\kitti"
+kitti_root = r"E:\monodepth-obstacle-warning\data\kitti"
 final_csv = r"E:\monodepth-obstacle-warning\data\kitti\kitti_subset_final_cleaned.csv"
-depth_dir = r"E:\monodepth_project\data\kitti\depth_maps"  # 深度图太大，存在外部
+depth_dir = r"E:\monodepth-obstacle-warning\data\kitti\depth_maps"  # 深度图太大，存在外部
 os.makedirs(depth_dir, exist_ok=True)
 
 
