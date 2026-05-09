@@ -9,12 +9,12 @@
 set -e
 
 EPOCHS=${1:-20}
-BATCH_SIZE=${2:-4}
+BATCH_SIZE=${2:-6}
 
 PYTHON="D:/anaconda3/envs/monodepth/python.exe"
 PROJECT_DIR="E:/monodepth-obstacle-warning"
 MD2_DIR="${PROJECT_DIR}/monodepth2"
-DATA_PATH="E:/monodepth_project/data/kitti"
+DATA_PATH="E:/monodepth-obstacle-warning/data/kitti"
 LOG_DIR="${PROJECT_DIR}/logs"
 SPLIT_NAME="kitti_subset"
 MODEL_NAME="kitti_subset_model"

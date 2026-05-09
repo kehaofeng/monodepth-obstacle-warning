@@ -14,6 +14,9 @@ Thumbs.db
 # KITTI raw data (large, local only)
 data/kitti/2011_09_26/
 data/kitti/2011_09_28/
+data/kitti/2011_09_29/
+data/kitti/2011_09_30/
+data/kitti/2011_10_03/
 data/kitti/depth_maps/
 
 # Claude Code config
