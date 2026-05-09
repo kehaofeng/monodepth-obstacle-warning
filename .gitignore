@@ -18,6 +18,3 @@ data/kitti/2011_09_29/
 data/kitti/2011_09_30/
 data/kitti/2011_10_03/
 data/kitti/depth_maps/
-
-# Claude Code config
-.claude/
