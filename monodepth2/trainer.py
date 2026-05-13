@@ -23,7 +23,7 @@ from layers import *
 
 import datasets
 import networks
-from IPython import embed
+
 
 
 class Trainer:
@@ -39,6 +39,7 @@ class Trainer:
         self.parameters_to_train = []
 
         self.device = torch.device("cpu" if self.opt.no_cuda else "cuda")
+        self.bce_loss = nn.BCELoss()
 
         self.num_scales = len(self.opt.scales)
         self.num_input_frames = len(self.opt.frame_ids)
@@ -455,7 +456,7 @@ class Trainer:
                 reprojection_losses *= mask
 
                 # add a loss pushing mask to 1 (using nn.BCELoss for stability)
-                weighting_loss = 0.2 * nn.BCELoss()(mask, torch.ones(mask.shape).cuda())
+                weighting_loss = 0.2 * self.bce_loss(mask, torch.ones(mask.shape, device=self.device))
                 loss += weighting_loss.mean()
 
             if self.opt.avg_reprojection:

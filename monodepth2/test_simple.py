@@ -16,7 +16,7 @@ import matplotlib as mpl
 import matplotlib.cm as cm
 
 import torch
-from torchvision import transforms, datasets
+from torchvision import transforms
 
 import networks
 from layers import disp_to_depth

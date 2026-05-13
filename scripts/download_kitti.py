@@ -4,13 +4,14 @@ Supports parallel downloads for speed.
 """
 
 import os
+import sys
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from config import KITTI_ROOT
 import zipfile
 import requests
 import argparse
 from concurrent.futures import ThreadPoolExecutor, as_completed
 import threading
-
-KITTI_ROOT = r"E:\monodepth-obstacle-warning\data\kitti"
 BASE_URL = "https://s3.eu-central-1.amazonaws.com/avg-kitti/raw_data"
 
 ALL_DATES = {

@@ -91,7 +91,7 @@ bash scripts/start_training.sh
 
 - **KITTI Raw Dataset**：http://www.cvlibs.net/datasets/kitti/raw_data.php
 - 当前使用 `2011_09_26` / `2011_09_28` / `2011_09_29` / `2011_09_30` 四个日期共 36 个同步序列
-- 原始数据路径：`E:\monodepth-obstacle-warning\data\kitti\`
+- 原始数据路径：`data/kitti/`（将 KITTI raw data 解压到此目录）
 
 ## 清洗结果
 
@@ -129,14 +129,14 @@ bash scripts/start_training.sh
 # 1. 转换数据为 Monodepth2 格式
 python scripts/convert_to_monodepth2.py
 
-# 2. 启动训练（默认 20 epochs, batch_size=6）
+# 2. 启动训练（默认 40 epochs, batch_size=8）
 bash scripts/start_training.sh
 
 # 自定义参数
-bash scripts/start_training.sh 30 8
+bash scripts/start_training.sh 50 12
 ```
 
-训练日志和模型权重保存在 `logs/kitti_subset_model/`，使用 TensorBoard 监控：
+训练日志和模型权重保存在 `logs/kitti_subset_v2/`，使用 TensorBoard 监控：
 
 ```bash
 tensorboard --logdir logs
@@ -148,12 +148,12 @@ tensorboard --logdir logs
 cd monodepth2
 python test_simple.py \
   --image_path <图片路径> \
-  --model_path logs/kitti_subset_model/models/weights_19
+  --model_path logs/kitti_subset_v2/models/weights_39
 ```
 
 输出：视差图 `.jpeg` 和 `.npy` 文件。
 
-### 训练结果（20 epochs，扩展数据集）
+### 训练结果（40 epochs，扩展数据集）
 
 | 指标 | 数值 |
 |------|------|
@@ -162,8 +162,10 @@ python test_simple.py \
 | 测试样本 | 1712 |
 | 输入分辨率 | 192×640 |
 | 编码器 | ResNet18 (pretrained) |
-| Batch size | 6 |
-| 最终模型 | weights_19 |
+| Batch size | 8 |
+| 平滑度系数 | 1.5e-3 |
+| 学习率调度 | StepLR@epoch 15 |
+| 最终模型 | weights_39 |
 
 验证集最佳指标：
 

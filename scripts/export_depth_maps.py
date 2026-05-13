@@ -8,14 +8,17 @@
 """
 
 import os
+import sys
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from config import KITTI_ROOT
 import cv2
 import numpy as np
 import pandas as pd
 
 # === 路径设置 ===
-kitti_root = r"E:\monodepth-obstacle-warning\data\kitti"
-final_csv = r"E:\monodepth-obstacle-warning\data\kitti\kitti_subset_final_cleaned.csv"
-depth_dir = r"E:\monodepth-obstacle-warning\data\kitti\depth_maps"  # 深度图太大，存在外部
+kitti_root = KITTI_ROOT
+final_csv = os.path.join(KITTI_ROOT, "kitti_subset_final_cleaned.csv")
+depth_dir = os.path.join(KITTI_ROOT, "depth_maps")  # 深度图太大，存在外部
 os.makedirs(depth_dir, exist_ok=True)
 
 

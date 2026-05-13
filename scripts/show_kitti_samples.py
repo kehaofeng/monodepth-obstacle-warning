@@ -1,6 +1,9 @@
 """工具: 可视化样本图像及其对应的深度图。"""
 
 import os
+import sys
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from config import KITTI_ROOT, RESULTS_DIR
 import cv2
 import numpy as np
 import pandas as pd
@@ -9,9 +12,9 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
 # === 路径 ===
-kitti_root = r"E:\monodepth-obstacle-warning\data\kitti"
-csv_path = r"E:\monodepth-obstacle-warning\data\kitti\kitti_subset_final_cleaned.csv"
-plot_path = r"E:\monodepth-obstacle-warning\results\plots\sample_depth_grid.png"
+kitti_root = KITTI_ROOT
+csv_path = os.path.join(KITTI_ROOT, "kitti_subset_final_cleaned.csv")
+plot_path = os.path.join(RESULTS_DIR, "plots", "sample_depth_grid.png")
 
 # === 加载标定 ===
 def read_calib(calib_path):

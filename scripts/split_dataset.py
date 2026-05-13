@@ -5,11 +5,14 @@
 """
 
 import os
+import sys
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from config import KITTI_ROOT
 import pandas as pd
 
 # === 路径设置 ===
-final_csv = r"E:\monodepth-obstacle-warning\data\kitti\kitti_subset_final_cleaned.csv"
-save_dir = r"E:\monodepth-obstacle-warning\data\kitti"
+final_csv = os.path.join(KITTI_ROOT, "kitti_subset_final_cleaned.csv")
+save_dir = KITTI_ROOT
 
 df = pd.read_csv(final_csv)
 print(f"加载 {len(df)} 条清洗后样本")

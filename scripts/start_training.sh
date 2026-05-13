@@ -3,21 +3,22 @@
 # Usage: bash scripts/start_training.sh [epochs] [batch_size]
 #
 # Prerequisites:
-#   1. KITTI raw data at E:\monodepth-obstacle-warning\data\kitti\
-#   2. Conda env "monodepth" with PyTorch + torchvision
+#   1. KITTI raw data extracted to data/kitti/
+#   2. Python with PyTorch + torchvision installed
 
 set -e
 
-EPOCHS=${1:-20}
-BATCH_SIZE=${2:-6}
+EPOCHS=${1:-40}
+BATCH_SIZE=${2:-8}
 
-PYTHON="D:/anaconda3/envs/monodepth/python.exe"
-PROJECT_DIR="E:/monodepth-obstacle-warning"
+PYTHON=python
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+PROJECT_DIR="$(dirname "$SCRIPT_DIR")"
 MD2_DIR="${PROJECT_DIR}/monodepth2"
-DATA_PATH="E:/monodepth-obstacle-warning/data/kitti"
+DATA_PATH="${PROJECT_DIR}/data/kitti"
 LOG_DIR="${PROJECT_DIR}/logs"
 SPLIT_NAME="kitti_subset"
-MODEL_NAME="kitti_subset_model"
+MODEL_NAME="kitti_subset_v2"
 
 echo "============================================"
 echo " Monodepth2 Training Pipeline"
@@ -49,6 +50,8 @@ PYTHONUNBUFFERED=1 ${PYTHON} -u train.py \
   --num_epochs ${EPOCHS} \
   --num_layers 18 \
   --num_workers 2 \
+  --scheduler_step_size 15 \
+  --disparity_smoothness 0.0015 \
   --log_dir "${LOG_DIR}" \
   --save_frequency 5
 

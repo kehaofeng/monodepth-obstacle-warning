@@ -1,12 +1,15 @@
 """Step 1: 扫描 KITTI 序列，按 frame_id 精确匹配图像和点云。"""
 
 import os
+import sys
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from config import KITTI_ROOT
 import cv2
 import numpy as np
 import pandas as pd
 
-kitti_root = r"E:\monodepth-obstacle-warning\data\kitti"
-save_dir = r"E:\monodepth-obstacle-warning\data\kitti"
+kitti_root = KITTI_ROOT
+save_dir = KITTI_ROOT
 os.makedirs(save_dir, exist_ok=True)
 
 sequences = []

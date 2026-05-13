@@ -1,12 +1,15 @@
 """Step 2: 分析数据质量，检测异常样本，输出最终清洗数据集。"""
 
 import os
+import sys
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from config import KITTI_ROOT
 import pandas as pd
 
 # === 路径设置 ===
-csv_path = r"E:\monodepth-obstacle-warning\data\kitti\kitti_subset_cleaned.csv"
-abnormal_path = r"E:\monodepth-obstacle-warning\data\kitti\kitti_subset_abnormal.csv"
-final_path = r"E:\monodepth-obstacle-warning\data\kitti\kitti_subset_final_cleaned.csv"
+csv_path = os.path.join(KITTI_ROOT, "kitti_subset_cleaned.csv")
+abnormal_path = os.path.join(KITTI_ROOT, "kitti_subset_abnormal.csv")
+final_path = os.path.join(KITTI_ROOT, "kitti_subset_final_cleaned.csv")
 
 # === 参数 ===
 LIDAR_THRESHOLD = 100000   # 点云点数低于此值视为异常

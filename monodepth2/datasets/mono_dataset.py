@@ -98,8 +98,8 @@ class MonoDataset(data.Dataset):
             frame = inputs[k]
             if "color" in k:
                 n, im, i = k
-                for i in range(self.num_scales):
-                    inputs[(n, im, i)] = self.resize[i](inputs[(n, im, i - 1)])
+                for j in range(self.num_scales):
+                    inputs[(n, im, j)] = self.resize[j](inputs[(n, im, j - 1)])
 
         for k in list(inputs):
             f = inputs[k]

@@ -1,0 +1,80 @@
+<html><head><meta charset=utf-8>
+@page { size: A4; margin: 1.5cm 1.8cm; }
+body { font-family: 'SimSun', serif; font-size: 8.5pt; line-height: 1.42; color: #222; }
+h1 { font-size: 12pt; text-align: center; margin: 0 0 8px 0; }
+h2 { font-size: 10pt; margin: 10px 0 3px 0; border-bottom: 0.7px solid #555; padding-bottom: 1px; }
+h3 { font-size: 9pt; margin: 6px 0 2px 0; }
+table { border-collapse: collapse; width: 100%; margin: 4px 0; font-size: 7.5pt; }
+th, td { border: 0.5px solid #999; padding: 1px 5px; text-align: left; }
+th { background: #ebebeb; font-weight: bold; }
+ul, ol { margin: 1px 0; padding-left: 18px; }
+li { margin: 0; }
+p { margin: 2px 0; text-align: justify; }
+code { font-size: 7pt; background: #f4f4f4; padding: 0 2px; }
+</head><body><h1>单目深度估计避障提示系统 — 中期进展报告</h1>
+<h2>一、项目简介</h2>
+<p>本项目基于自监督单目深度估计方法 Monodepth2 [1]，利用 KITTI 车载数据集 [2] 训练模型从单帧 RGB 图像预测像素级深度图，并计划开发辅助驾驶避障提示功能。自监督方案仅依赖连续视频帧的光度重投影误差，无需昂贵的深度传感器标注，适合计算资源有限的小型实操项目。</p>
+<h2>二、数据处理</h2>
+<p>使用 KITTI Raw Dataset 公开数据，覆盖 4 个采集日期、37 个驾驶序列，共 18201 个同步图像-点云配对样本。经 7 步标准化流水线（元数据提取→质量分析→数据集划分→深度图生成→统计可视化→格式转换→启动训练）处理后，剔除 11 个异常样本，清洗后共 18190 样本。按序列整体划分确保无场景泄露：训练集 14109 (77.6%)、验证集 2369 (13.0%)、测试集 1712 (9.4%)。四种原始分辨率（375×1242 / 370×1224 / 374×1238 / 370×1226）统一缩放至 192×640。</p>
+<p>已验证的关键点：(1) 图像按 frame_id 精确匹配点云文件，避免排序错配；(2) LiDAR 点云集中在 118K~122K 点/帧，投影后可提供完整深度监督；(3) 序列首尾帧自动过滤（缺少相邻帧无法构成训练对）。</p>
+<h2>三、模型设计与训练</h2>
+<p><strong>方法原理</strong>：Monodepth2 采用深度网络（ResNet18 编码器 + 多尺度解码器）+ 位姿网络（独立 ResNet18）双网络架构。利用预测深度和位姿将相邻帧重投影到目标视角，以 SSIM+L1 混合光度误差为监督信号。关键设计包括自动掩膜（屏蔽静止像素）、最小重投影误差（解决遮挡）和多尺度联合优化。</p>
+<p><strong>训练配置</strong>：完成两轮训练实验，均使用 RTX 4060 Laptop (8GB)、PyTorch 2.5.1、输入分辨率 192×640、Adam 优化器。V2 主要改进：epoch 翻倍（20→40）、batch size 增大（6→8）、平滑系数提升（1e-3→1.5e-3）、学习率经两次衰减（1e-4→1e-5→1e-6）。</p>
+<p><strong>V2 训练结果</strong>（总步数 70,000，log frequency=250）：</p>
+<table>
+<thead>
+<tr>
+<th>阶段</th>
+<th>Epoch</th>
+<th>Train Loss 均值</th>
+<th>Val Loss 均值</th>
+<th>趋势</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Q1</td>
+<td>1–10</td>
+<td>0.1191</td>
+<td>0.1143</td>
+<td>快速下降</td>
+</tr>
+<tr>
+<td>Q2</td>
+<td>11–20</td>
+<td>0.0840</td>
+<td>0.0881</td>
+<td>稳步收敛</td>
+</tr>
+<tr>
+<td>Q3</td>
+<td>21–30</td>
+<td>0.0684</td>
+<td>0.0810</td>
+<td>进入微调</td>
+</tr>
+<tr>
+<td>Q4</td>
+<td>31–40</td>
+<td>0.0700</td>
+<td>0.0760</td>
+<td>收益收窄</td>
+</tr>
+</tbody>
+</table>
+<p>Train Loss 从 0.1461 降至 0.0610（-58.2%），Val Loss 从 0.1520 降至 0.0520（-65.8%），Val 平滑最优出现在 epoch 30 附近（step 52000）。训练正常收敛，无明显过拟合；后期收益收窄但仍缓慢改善。</p>
+<h2>四、遇到的问题及解决方案</h2>
+<ol>
+<li><strong>图像与点云文件名错配</strong>：2011_09_30 序列文件名不严格对应，按文件名排序配对导致错位。改为按 frame_id 精确匹配。</li>
+<li><strong>多分辨率处理</strong>：四个日期相机型号不同，输出四种分辨率。统一缩放至 192×640 简化数据加载。</li>
+<li><strong>序列首尾帧缺失相邻帧</strong>：Monodepth2 需前向+后向帧构建训练对。格式转换时自动过滤首尾帧。</li>
+<li><strong>GPU 显存限制</strong>：默认 batch=12 导致 OOM。经逐步测试确定 batch=8 为稳定上限，配合低分辨率确保训练正常完成。</li>
+<li><strong>V1 训练不充分</strong>：20 epoch 后 Loss 仍在下滑。V2 翻倍至 40 epoch，增加第二次 LR 衰减（epoch 30），Train Loss 在 V1 基础上进一步下降约 40%。</li>
+</ol>
+<h2>五、当前进度与后续计划</h2>
+<p><strong>已完成</strong>：(1) KITTI 数据下载与 7 步清洗流水线；(2) LiDAR 深度图投影与 5 类统计可视化；(3) Monodepth2 V1（20 epochs, AbsRel=0.101）与 V2（40 epochs, Train Loss -58%）两轮训练；(4) 单图推理验证；(5) GitHub 代码仓库与文档。</p>
+<p><strong>后续计划（第 11-16 周）</strong>：(1) 对 V2 epochs 30/35/40 权重做全量验证集评估，选出最优模型；(2) 设计避障提示规则（距离阈值 + ROI 区域划分）；(3) 开发可视化叠加界面（深度热力图 + 红光警示）；(4) 引入 Lite-Mono [3] 进行精度-速度对比实验；(5) 录制演示视频并撰写最终技术报告（3000~5000 字）。</p>
+<h2>参考文献</h2>
+<p>[1] C. Godard et al., "Digging into Self-Supervised Monocular Depth Estimation," ICCV 2019.
+[2] A. Geiger et al., "Vision meets Robotics: The KITTI Dataset," IJRR 2013.
+[3] N. Zhang et al., "Lite-Mono: A Lightweight CNN and Transformer Architecture for Self-Supervised Monocular Depth Estimation," CVPR 2023.</p></body></html>

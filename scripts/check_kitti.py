@@ -1,11 +1,14 @@
 """工具: 快速检查 KITTI 数据完整性（图像与点云是否正确配对）。"""
 
 import os
+import sys
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from config import KITTI_ROOT
 import cv2
 import random
 import numpy as np
 
-kitti_root = r"E:\monodepth-obstacle-warning\data\kitti"
+kitti_root = KITTI_ROOT
 
 # 自动发现序列
 for date_dir in sorted(os.listdir(kitti_root)):

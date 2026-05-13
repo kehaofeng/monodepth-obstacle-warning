@@ -1,10 +1,13 @@
 """工具: 从清洗后的 CSV 生成 train/val/test 文件列表。"""
 
 import os
+import sys
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from config import KITTI_ROOT
 import pandas as pd
 
-csv_path = r"E:\monodepth-obstacle-warning\data\kitti\kitti_subset_final_cleaned.csv"
-save_dir = r"E:\monodepth-obstacle-warning\data\kitti"
+csv_path = os.path.join(KITTI_ROOT, "kitti_subset_final_cleaned.csv")
+save_dir = KITTI_ROOT
 
 df = pd.read_csv(csv_path)
 

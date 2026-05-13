@@ -1,14 +1,17 @@
 """Step 5: 生成数据集分析图表。"""
 
 import os
+import sys
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from config import KITTI_ROOT, RESULTS_DIR
 import pandas as pd
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
 # === 路径 ===
-csv_path = r"E:\monodepth-obstacle-warning\data\kitti\kitti_subset_final_cleaned.csv"
-plot_dir = r"E:\monodepth-obstacle-warning\results\plots"
+csv_path = os.path.join(KITTI_ROOT, "kitti_subset_final_cleaned.csv")
+plot_dir = os.path.join(RESULTS_DIR, "plots")
 os.makedirs(plot_dir, exist_ok=True)
 
 THRESHOLD = 100000

@@ -12,9 +12,24 @@ weights/
 Thumbs.db
 
 # KITTI raw data (large, local only)
-data/kitti/2011_09_26/
-data/kitti/2011_09_28/
-data/kitti/2011_09_29/
-data/kitti/2011_09_30/
-data/kitti/2011_10_03/
+data/kitti/2011_*/
 data/kitti/depth_maps/
+
+# Generated data files (contain machine-specific paths)
+data/kitti/*_files.txt
+data/kitti/*.csv
+data/kitti/*.json
+
+# Python packaging
+*.egg-info/
+dist/
+build/
+.mypy_cache/
+.pytest_cache/
+*.so
+*.egg
+
+# Secrets
+*.key
+*.pem
+credentials*
