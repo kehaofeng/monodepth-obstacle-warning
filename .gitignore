@@ -50,3 +50,5 @@ build/
 *.key
 *.pem
 credentials*
+
+lite-mono/tmp/
