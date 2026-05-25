@@ -4,10 +4,20 @@ __pycache__/
 .env
 .venv/
 venv/
-logs/
+.vscode/
 weights/
+
+# Keep training logs for review, but do not commit large checkpoints
 *.pth
 *.pt
+*.ckpt
+*.tar
+
+# Generated prediction arrays / evaluation caches
+*.npy
+*.npz
+
+# TensorBoard event files are intentionally not ignored
 .DS_Store
 Thumbs.db
 
@@ -19,6 +29,12 @@ data/kitti/depth_maps/
 data/kitti/*_files.txt
 data/kitti/*.csv
 data/kitti/*.json
+
+# Temporary inference outputs. Keep curated report assets under results/plots
+# and baseline metric exports under results/v*_baseline.
+results/*_demo/
+results/v2_test/
+results/test_image.*
 
 # Python packaging
 *.egg-info/
