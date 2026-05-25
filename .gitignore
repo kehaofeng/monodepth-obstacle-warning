@@ -35,6 +35,7 @@ data/kitti/*.json
 results/*_demo/
 results/v2_test/
 results/test_image.*
+results/checkpoint_comparison/
 
 # Python packaging
 *.egg-info/
