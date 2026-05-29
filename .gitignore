@@ -30,12 +30,16 @@ data/kitti/*_files.txt
 data/kitti/*.csv
 data/kitti/*.json
 
+# Model Log
+logs/
+
 # Temporary inference outputs. Keep curated report assets under results/plots
 # and baseline metric exports under results/v*_baseline.
 results/*_demo/
 results/v2_test/
 results/test_image.*
 results/checkpoint_comparison/
+results/*.csv
 
 # Python packaging
 *.egg-info/
@@ -52,3 +56,14 @@ build/
 credentials*
 
 lite-mono/tmp/
+
+# Submission scope: keep only data cleaning / dataset preparation scripts.
+scripts/*
+!scripts/README.md
+!scripts/download_kitti.py
+!scripts/check_kitti.py
+!scripts/clean_kitti_subset.py
+!scripts/analyze_kitti_cleaning.py
+!scripts/split_dataset.py
+!scripts/make_file_list.py
+!scripts/plot_kitti_analysis.py
