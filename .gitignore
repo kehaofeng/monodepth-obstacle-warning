@@ -67,3 +67,5 @@ scripts/*
 !scripts/split_dataset.py
 !scripts/make_file_list.py
 !scripts/plot_kitti_analysis.py
+!scripts/obstacle_warning_image.py
+!scripts/obstacle_warning_video.py
