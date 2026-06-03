@@ -17,7 +17,8 @@ weights/
 *.npy
 *.npz
 
-# TensorBoard event files are intentionally not ignored
+# TensorBoard raw event files can exceed GitHub's 100 MB file limit.
+events.out.tfevents.*
 .DS_Store
 Thumbs.db
 
@@ -30,16 +31,12 @@ data/kitti/*_files.txt
 data/kitti/*.csv
 data/kitti/*.json
 
-# Model Log
-logs/
-
 # Temporary inference outputs. Keep curated report assets under results/plots
 # and baseline metric exports under results/v*_baseline.
 results/*_demo/
 results/v2_test/
 results/test_image.*
 results/checkpoint_comparison/
-results/*.csv
 
 # Python packaging
 *.egg-info/
@@ -55,6 +52,7 @@ build/
 *.pem
 credentials*
 
+monodepth2/logs/
 lite-mono/tmp/
 
 # Submission scope: keep only data cleaning / dataset preparation scripts.
@@ -69,3 +67,7 @@ scripts/*
 !scripts/plot_kitti_analysis.py
 !scripts/obstacle_warning_image.py
 !scripts/obstacle_warning_video.py
+
+demo/
+
+docs/

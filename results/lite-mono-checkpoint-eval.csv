@@ -1,0 +1,8 @@
+checkpoint,abs_rel,sq_rel,rmse,rmse_log,a1,a2,a3,scaling_ratio_med,scaling_ratio_std,eval_split
+lite-mono-v1/weights_6,0.167,1.375,5.788,0.246,0.786,0.926,0.967,41.548,0.060,kitti_subset
+lite-mono-v2/weights_5,0.154,1.337,5.677,0.237,0.814,0.934,0.972,38.443,0.066,kitti_subset
+lite-mono-v2/weights_6,0.151,1.334,5.722,0.238,0.815,0.934,0.972,37.637,0.061,kitti_subset
+lite-mono-v3/weights_0,0.159,1.404,5.889,0.244,0.801,0.926,0.969,38.008,0.063,kitti_subset
+lite-mono-v3/weights_3,0.161,1.461,5.794,0.242,0.802,0.929,0.969,36.230,0.061,kitti_subset
+lite-mono-v3/weights_12,0.159,1.533,5.826,0.243,0.819,0.930,0.967,34.843,0.062,kitti_subset
+lite-mono-v3/weights_15,0.160,1.615,5.815,0.246,0.825,0.930,0.966,33.795,0.063,kitti_subset

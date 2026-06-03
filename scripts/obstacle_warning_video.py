@@ -32,8 +32,8 @@ def parse_args():
     parser.add_argument("--roi_x1", type=float, default=0.33)
     parser.add_argument("--roi_x2", type=float, default=0.67)
     parser.add_argument("--roi_y1", type=float, default=0.40)
-    parser.add_argument("--roi_y2", type=float, default=0.78)
-    parser.add_argument("--near_percentile", type=float, default=88.0)
+    parser.add_argument("--roi_y2", type=float, default=0.88)
+    parser.add_argument("--near_percentile", type=float, default=85.0)
     parser.add_argument("--caution_ratio", type=float, default=0.08)
     parser.add_argument("--danger_ratio", type=float, default=0.18)
     parser.add_argument(

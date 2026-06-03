@@ -36,11 +36,11 @@ def parse_args():
     parser.add_argument("--roi_x1", type=float, default=0.33)
     parser.add_argument("--roi_x2", type=float, default=0.67)
     parser.add_argument("--roi_y1", type=float, default=0.40)
-    parser.add_argument("--roi_y2", type=float, default=0.78)
+    parser.add_argument("--roi_y2", type=float, default=0.88)
     parser.add_argument(
         "--near_percentile",
         type=float,
-        default=88.0,
+        default=85.0,
         help="Pixels above this disparity percentile are treated as near.",
     )
     parser.add_argument(
