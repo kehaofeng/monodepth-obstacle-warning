@@ -37,6 +37,7 @@ results/*_demo/
 results/v2_test/
 results/test_image.*
 results/checkpoint_comparison/
+results/depth_quality_comparison/
 
 # Python packaging
 *.egg-info/
@@ -58,7 +59,6 @@ lite-mono/tmp/
 # Submission scope: keep only data cleaning / dataset preparation scripts.
 scripts/*
 !scripts/README.md
-!scripts/download_kitti.py
 !scripts/check_kitti.py
 !scripts/clean_kitti_subset.py
 !scripts/analyze_kitti_cleaning.py
