@@ -11,30 +11,9 @@
 ```
 
 当前仓库重点保留课程提交和汇报所需的核心代码、结果图表和说明文档。KITTI 原始数据、模型权重、实拍视频、TensorBoard 原始 event 日志等大文件作为本地实验材料，不纳入普通 Git 提交。
-本项目基于 KITTI Raw Dataset，完成了单目深度估计相关的数据清洗、数据集划分、统计分析、模型训练评估，以及基于实拍视频的前方障碍物提示 demo。
-
-项目主要包含三部分：
-
-```text
-1. KITTI 数据清洗与 train / val / test 划分
-2. Monodepth2 / Lite-Mono 单目深度估计训练与评估
-3. 基于预测视差图的 SAFE / CAUTION / DANGER 避障提示 demo
-```
-
-当前仓库重点保留课程提交和汇报所需的核心代码、结果图表和说明文档。KITTI 原始数据、模型权重、实拍视频、TensorBoard 原始 event 日志等大文件作为本地实验材料，不纳入普通 Git 提交。
 
 ## 项目结构
 
-```text
-.
-├── config.py                  # 项目路径配置
-├── requirements.txt           # Python 依赖
-├── scripts/                   # 数据清洗、统计作图、避障提示脚本
-├── data/kitti/                # 本地 KITTI 数据与清洗结果
-├── results/                   # 实验指标、loss 曲线、数据统计图
-├── monodepth2/                # Monodepth2 模型代码与本地日志目录
-├── lite-mono/                 # Lite-Mono 模型代码与本地实验目录
-└── docs/                      # 报告、说明文档、答辩资料
 ```text
 .
 ├── config.py                  # 项目路径配置
@@ -89,50 +68,9 @@ data/kitti/
 ```
 
 KITTI 中包含车载 RGB 图像和 LiDAR 点云。本项目先将图像与对应 LiDAR 点云按 frame_id 匹配，再进行样本有效性检查和异常样本剔除。
-建议使用 Python 3.9+。
-
-```bash
-pip install -r requirements.txt
-```
-
-主要依赖包括：
-
-```text
-PyTorch
-torchvision
-NumPy
-Pandas
-OpenCV
-Matplotlib
-Pillow
-scikit-image
-tensorboardX
-requests
-```
-
-## 数据集说明
-
-本项目使用 KITTI Raw Dataset。
-
-```text
-使用日期：
-2011_09_26
-2011_09_28
-2011_09_29
-2011_09_30
-
-本地路径：
-data/kitti/
-
-有效同步驾驶序列数量：
-36
-```
-
-KITTI 中包含车载 RGB 图像和 LiDAR 点云。本项目先将图像与对应 LiDAR 点云按 frame_id 匹配，再进行样本有效性检查和异常样本剔除。
 
 ## 数据清洗流程
 
-按顺序运行：
 按顺序运行：
 
 ```bash
@@ -140,7 +78,6 @@ python scripts/check_kitti.py
 python scripts/clean_kitti_subset.py
 python scripts/analyze_kitti_cleaning.py
 python scripts/split_dataset.py
-python scripts/make_file_list.py
 python scripts/make_file_list.py
 python scripts/plot_kitti_analysis.py
 ```
