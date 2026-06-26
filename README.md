@@ -1,13 +1,12 @@
-# 单目深度估计避障提示系统
+# 基于 KITTI 数据集的单目深度估计模型对比研究
 
-本项目基于 KITTI Raw Dataset，完成了单目深度估计相关的数据清洗、数据集划分、统计分析、模型训练评估，以及基于实拍视频的前方障碍物提示 demo。
+本项目基于 KITTI Raw Dataset，完成单目深度估计相关的数据清洗、数据集划分、统计分析、模型训练、定量评估与推理结果可视化，并对 Monodepth2 和 Lite-Mono 两类模型进行对比研究。
 
-项目主要包含三部分：
+项目主要包含两部分：
 
 ```text
 1. KITTI 数据清洗与 train / val / test 划分
 2. Monodepth2 / Lite-Mono 单目深度估计训练与评估
-3. 基于预测视差图的 SAFE / CAUTION / DANGER 避障提示 demo
 ```
 
 当前仓库重点保留课程提交和汇报所需的核心代码、结果图表和说明文档。KITTI 原始数据、模型权重、实拍视频、TensorBoard 原始 event 日志等大文件作为本地实验材料，不纳入普通 Git 提交。
@@ -18,7 +17,7 @@
 .
 ├── config.py                  # 项目路径配置
 ├── requirements.txt           # Python 依赖
-├── scripts/                   # 数据清洗、统计作图、避障提示脚本
+├── scripts/                   # 数据清洗与统计作图脚本
 ├── data/kitti/                # 本地 KITTI 数据与清洗结果
 ├── results/                   # 实验指标、loss 曲线、数据统计图
 ├── monodepth2/                # Monodepth2 模型代码与本地日志目录
@@ -243,19 +242,19 @@ results/lite-mono-checkpoint-eval.csv
 
 多尺度训练损失对应 Monodepth2 在不同分辨率尺度上的输出损失，用于观察模型在多个尺度上的收敛情况。
 
-## 单张图片推理
+## 单张图像推理
 
 Monodepth2 单张图像推理示例：
 
 ```powershell
-python monodepth2\test_simple.py --image_path demo\test.png --model_path monodepth2\logs\kitti_subset_v2\models\weights_39 --no_cuda
+python monodepth2\test_simple.py --image_path assets\sample.png --model_path monodepth2\logs\kitti_subset_v2\models\weights_39 --no_cuda
 ```
 
 生成文件：
 
 ```text
-demo/test_disp.jpeg
-demo/test_disp.npy
+assets/sample_disp.jpeg
+assets/sample_disp.npy
 ```
 
 其中：
@@ -265,113 +264,44 @@ demo/test_disp.npy
 视差图可视化结果。
 
 *_disp.npy：
-数值视差结果，后续避障提示逻辑会读取该文件。
+数值视差结果，可用于定量分析或其他下游视觉任务。
 ```
 
-## 避障提示 Demo
+## 模型对比结论
 
-当前 demo 基于视差图进行前方风险判断，不直接识别“车”“树”“人”或“自行车”的类别。
+从现有测试集结果看，Monodepth2 v1 与 Lite-Mono 的综合精度接近。Monodepth2 v1 的 AbsRel 和 RMSE 略低，Lite-Mono 在部分阈值精度指标上具有竞争力，同时模型结构更轻量。Monodepth2 v2 虽然训练损失更低，但测试指标未超过 v1，说明扩大训练规模并不必然带来更好的泛化能力。
 
-基本逻辑：
-
-```text
-1. 输入 RGB 图像或视频帧。
-2. 使用 Monodepth2 / Lite-Mono 预测视差图。
-3. 选取画面中央偏下区域作为前方 ROI。
-4. 统计 ROI 中近距离像素比例。
-5. 输出 SAFE / CAUTION / DANGER 三种状态。
-```
-
-单张图片避障提示：
-
-```powershell
-python scripts\obstacle_warning_image.py --image_path demo\test.png
-```
-
-视频帧合成避障提示视频：
-
-```powershell
-python scripts\obstacle_warning_video.py --frames_dir demo\2_frames_30fps --output_path demo\2_warning.mp4 --ext jpg
-```
-
-常用参数：
-
-```text
---roi_x1 / --roi_x2：
-控制检测框左右范围。
-
---roi_y1 / --roi_y2：
-控制检测框上下范围。
-
---near_percentile：
-控制哪些像素被认为是近处。数值越低，系统越敏感。
-
---caution_ratio：
-触发 CAUTION 的近处像素比例。
-
---danger_ratio：
-触发 DANGER 的近处像素比例。
-
---layout：
-控制展示样式，支持 overlay 和 triple。
-```
-
-示例：
-
-```powershell
-python scripts\obstacle_warning_video.py --frames_dir demo\2_frames_30fps --output_path demo\2_warning_near85.mp4 --ext jpg --near_percentile 85
-```
-
-说明：
-
-```text
-near_percentile = 85
-表示把视差值排名前 15% 的像素视为近处，比默认值 88 更敏感。
-```
-
-## Demo 展示建议
-
-汇报时建议展示两类场景：
-
-```text
-1. 侧边障碍物：
-障碍物位于画面侧边，不在前方 ROI 内，系统提示 SAFE。
-
-2. 正前方接近障碍物：
-树木、车辆、自行车或电动车进入前方 ROI 后，系统提示 CAUTION 或 DANGER。
-```
-
-这样可以说明当前系统关注的是“前方通行区域风险”，而不是简单地看到任意物体就报警。
+该结果表明，单目深度估计模型应同时从误差指标、阈值精度、训练成本和推理效率等维度评价，不能只依据训练 loss 选择模型。
 
 ## 应用前景
 
-本项目适合作为低成本视觉感知和避障提示原型，可扩展到：
+单目深度估计可作为低成本视觉感知的基础模块，可扩展到：
 
 ```text
-1. 智能辅助驾驶中的前方风险提示。
-2. 移动机器人、巡检机器人、配送机器人的基础避障。
-3. 视觉辅助设备中的前方障碍提醒。
-4. 与红外、超声波或 LiDAR 融合，提高复杂环境下的可靠性。
+1. 自动驾驶与机器人场景的三维环境感知。
+2. 图像重建、虚拟现实和增强现实中的空间理解。
+3. 轻量化模型在手机、Jetson 等边缘设备上的部署研究。
+4. 与双目视觉或 LiDAR 深度信息融合，提高估计精度。
 ```
 
-需要注意，本项目并不是要完全替代 LiDAR、红外或超声波等传感器，而是探索一种基于普通摄像头的低成本视觉感知方案。
+本项目重点研究普通摄像头条件下的深度估计方法与模型差异，不以替代高精度深度传感器为目标。
 
 ## 当前不足
 
 ```text
 1. 单目深度估计主要反映相对深度，绝对距离不够精确。
-2. 实拍视频和 KITTI 车载数据存在视角、焦距和场景分布差异。
-3. 对自行车、电动车等细小稀疏障碍物的判断仍不稳定。
-4. 当前避障逻辑基于固定 ROI 和阈值，规则较简单。
-5. 视频 demo 目前主要采用离线逐帧处理，尚未实现实时部署。
+2. 当前实验主要基于 KITTI 车载数据，跨数据集泛化能力尚未充分验证。
+3. 不同模型的参数量、FLOPs 和端侧推理速度仍需在同一硬件环境下统一测量。
+4. 训练数据包含大量连续帧，场景多样性仍有限。
+5. 目前以离线推理和评估为主，尚未完成边缘设备部署测试。
 ```
 
 ## 后续改进方向
 
 ```text
-1. 加入目标检测，区分车辆、行人、自行车、电动车等类别。
-2. 引入视频时序平滑，减少逐帧提示抖动。
-3. 根据场景自适应调整 ROI 和风险阈值。
+1. 在统一测试协议下补充参数量、FLOPs、显存占用和推理速度对比。
+2. 增加不同输入分辨率、平滑系数和训练轮数的消融实验。
+3. 使用跨数据集测试评估模型在不同场景下的泛化能力。
 4. 优化模型推理速度，尝试部署到 Jetson、手机或其他边缘设备。
-5. 与红外、超声波或 LiDAR 进行多传感器融合。
+5. 研究深度图边缘、纹理缺失区域和动态物体区域的误差分布。
 ```
